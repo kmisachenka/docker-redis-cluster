@@ -1,0 +1,80 @@
+version: '3'
+services:
+  redis-7000:
+    container_name: redis-7000
+    image: redis:4-alpine
+    command: redis-server /usr/local/etc/redis/7000.conf
+    ports:
+      - "7000:7000"
+    volumes:
+      - ./7000.conf:/usr/local/etc/redis/7000.conf
+      - ./volumes/7000:/var/redis/7000
+      - ./volumes/7000/redis_7000.log:/var/log/redis_7000.log
+    networks:
+      redis:
+        ipv4_address: 172.16.238.2
+
+  redis-7001:
+    container_name: redis-7001
+    image: redis:4-alpine
+    command: redis-server /usr/local/etc/redis/7001.conf
+    ports:
+      - "7001:7001"
+    volumes:
+      - ./7001.conf:/usr/local/etc/redis/7001.conf
+      - ./volumes/7001:/var/redis/7001
+      - ./volumes/7001/redis_7001.log:/var/log/redis_7001.log
+    networks:
+      redis:
+        ipv4_address: 172.16.238.3
+
+  redis-7002:
+    container_name: redis-7002
+    image: redis:4-alpine
+    command: redis-server /usr/local/etc/redis/7002.conf
+    ports:
+      - "7002:7002"
+    volumes:
+      - ./7002.conf:/usr/local/etc/redis/7002.conf
+      - ./volumes/7002:/var/redis/7002
+      - ./volumes/7002/redis_7002.log:/var/log/redis_7002.log
+    networks:
+      redis:
+        ipv4_address: 172.16.238.4
+
+  redis-7003:
+    container_name: redis-7003
+    image: redis:4-alpine
+    command: redis-server /usr/local/etc/redis/7003.conf
+    ports:
+      - "7003:7003"
+    volumes:
+      - ./7003.conf:/usr/local/etc/redis/7003.conf
+      - ./volumes/7003:/var/redis/7003
+      - ./volumes/7003/redis_7003.log:/var/log/redis_7003.log
+    networks:
+      redis:
+        ipv4_address: 172.16.238.5
+
+  redis-trib:
+    container_name: redis-trib
+    build:
+      context: ./redis-trib
+    command: create 172.16.238.2:7000 172.16.238.3:7001 172.16.238.4:7002 172.16.238.5:7003
+    depends_on:
+      - redis-7000
+      - redis-7001
+      - redis-7002
+      - redis-7003
+    networks:
+      redis:
+        ipv4_address: 172.16.238.6
+
+networks:
+  redis:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      -
+        subnet: 172.16.238.0/29
